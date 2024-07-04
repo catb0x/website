@@ -22,9 +22,9 @@
   border-radius: 0.25rem;
   color: #913bca;
 }
-hgroup {
+hgroup * {
   text-align: start;
-  font-family: yerk;
+  font-family: yerk !important;
 }
 body {
   background: linear-gradient(#ffffff, #874ccf);
