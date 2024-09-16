@@ -1,0 +1,52 @@
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="theme-color" content="#10121F">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta property="og:image" content="yves-mugunghwa-4">
+    <meta property="og:description" content="orbit. arovincian. stream loop by yves.">
+    <link type="application/json+oembed" href="https://vyz.ee/oembed.json">
+    <link rel="icon" type="image/x-icon" href="purple-heart_2.ico">
+    <link rel="stylesheet" href="style.css">
+    <script src="//cdn.jsdelivr.net/npm/simple-crypto-js@2.5.0/dist/SimpleCrypto.min.js"></script>
+    <script>
+      let original;
+
+      fetch(`https://corsproxy.io/?${encodeURIComponent('https://yves.nekoweb.org/immaterial.txt')}`)
+        .then(response => response.text())
+        .then(text => original = text)
+        .catch(error => console.error('Error fetching the text:', error));
+
+      function myFunction() {
+        let key = document.getElementById("key").value;
+        let simpleCrypto = new SimpleCrypto(key);
+
+        try {
+          let decryptedText = simpleCrypto.decrypt(original);
+          document.getElementById("text").innerHTML = decryptedText;
+        } catch (error) {
+          console.error('Decryption failed:', error);
+          document.getElementById("text").innerHTML = 'decryption failed. check the key.';
+        }
+      }
+    </script>
+    <title>vyzee</title>
+  </head>
+  <body>
+    <iframe width="0" height="0" src="https://www.youtube.com/embed?autoplay=1&amp;playlist=KXdRl6Ml37I&amp;loop=1" allow="autoplay;" style="display:none"></iframe>
+    <div id="wrapper">
+      <div id="container">
+        <main>
+          <hgroup><h1>kit's website<i>!</i></h1></hgroup>
+         <section>
+           <div>
+             <label for="key">key:</label>
+             <input type="text" id="key" name="key" size="10" oninput="myFunction()" />
+           </div>
+           <div id="text" style="">enter the latest code to get access to the page</div>
+         </section>
+        </main>
+      </div>
+    </div>
+  </body>
+</html>
