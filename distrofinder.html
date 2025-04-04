@@ -4,6 +4,9 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width">
     <title>Spotify Distributor Finder</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=Roboto:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
     <style>
         :root {
           background-color: #191919;
@@ -34,10 +37,10 @@
           height: 24px;
           &:active { background-color: #a6a6a6 }
         }
-        div#results:not(:empty) { margin-top: 24px; }
+        div#results:not(:empty) { margin-top: 20px; }
         footer {
           font-size: 12px;
-          margin-top: 12px;
+          margin-top: 16px;
         }
         div#head {
           max-width: fit-content;
@@ -77,7 +80,7 @@
     <div id="head">
         <h1>Spotify Distributor Finder</h1>
         <div style="display: flex; gap: 4px;">
-            <input id="album"></input>
+            <input id="album" placeholder="Your Album URL"></input>
             <button id="find" onclick="findDistro()">Find Distro</button>
         </div>
     </div>
