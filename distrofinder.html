@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width">
+    <title>Spotify Distributor Finder</title>
+    <style>
+        :root {
+          background-color: #191919;
+          color: #cfcfcf;
+          font-family: "Inter", sans-serif;
+          text-align: center;
+          text-wrap: balance;
+        }
+        body {
+          margin: 0;
+          position: absolute;
+          top: 50%;
+          left: 50%;
+          transform: translate(-50%, -50%);
+        }
+        input#album, button#find {
+          background-color: #cfcfcf;
+          border: solid 1px #585858;
+          color: #191919;
+          border-radius: 4px;
+          font-family: "Inter", sans-serif;
+          width: fit-content;
+          white-space: nowrap;
+          padding-inline: 6px;
+        }
+        input#album { width: 100%; }
+        button#find {
+          height: 24px;
+          &:active { background-color: #a6a6a6 }
+        }
+        div#results:not(:empty) { margin-top: 24px; }
+        footer {
+          font-size: 12px;
+          margin-top: 12px;
+        }
+        div#head {
+          max-width: fit-content;
+          margin-inline: auto;
+        }
+        big {
+          font-weight: bold;
+          font-size: 24px;
+        }
+    </style>
+    <script>
+        async function findDistro() {
+          const resultsElement = document.getElementById("results");
+          const inputElement = document.getElementById("album");
+          const album = (inputElement.value.match(/(?<=https?:\/\/open.spotify.com\/album\/)[^\?|#]*/gm))[0];
+          try {
+            if (!album || album.length === 0) {
+              resultsElement.innerHTML = `<p>This does not seem to be a valid Spotify Album URL.</p>`;
+              return
+            }
+            const response = await fetch(`https://server.vyz.ee/metadata/${album}`);
+            const json = await response.json();
+            const { albumName, artistName, coverArt } = json;
+            const distroResponse = await fetch(`https://server.vyz.ee/album/${album}`);
+            const distroJson = await distroResponse.json();
+            const distro = distroJson.distributor
+            resultsElement.innerHTML = `
+            <p>The release ${albumName} by ${artistName} was originally distributed by:</p>
+            <p><big>${distro}</big></p>
+            <img width="300" src="${coverArt}">
+            `;
+          } catch { resultsElement.innerHTML = `<p>An unknown error happened.</p>`; }
+        }
+    </script>
+</head>
+<body>
+    <div id="head">
+        <h1>Spotify Distributor Finder</h1>
+        <div style="display: flex; gap: 4px;">
+            <input id="album"></input>
+            <button id="find" onclick="findDistro()">Find Distro</button>
+        </div>
+    </div>
+    <div id="results"></div>
+    <footer>made with &lt;3 by kit</footer>
+</body>
+</html>
