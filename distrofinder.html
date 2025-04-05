@@ -81,10 +81,11 @@
             const { albumName, artistName, coverArt } = json;
             const distroResponse = await fetch(`https://server.vyz.ee/album/${album}`);
             const distroJson = await distroResponse.json();
-            if (distroJson.error.text != null) {
+            if (distroJson.error) {
+              const errorMessage = distroJson.error.text;
               resultsElement.innerHTML = `
               <p>An error has occurred:</p>
-              <samp id="error">${distroJson.error.text}</samp>
+              <samp id="error">${errorMessage}</samp>
               `;
               return;
             }
