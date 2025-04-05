@@ -88,13 +88,16 @@
               `;
               return;
             }
-            const distro = distroJson.distributor
+            const distro = distroJson.distributor;
             resultsElement.innerHTML = `
             <p>The release ${albumName} by ${artistName} was originally distributed by:</p>
             <p><big>${distro}</big></p>
             <img width="300" src="${coverArt}">
             `;
-          } catch { resultsElement.innerHTML = `<p>An unknown error has occurred.</p>`; }
+          } catch(err) {
+              resultsElement.innerHTML = `<p>An unknown error has occurred.</p>`;
+              throw err.message;
+          }
         }
     </script>
 </head>
