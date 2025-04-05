@@ -47,7 +47,7 @@
         div#results:not(:empty) { margin-top: 20px; }
         footer {
           font-size: 12px;
-          margin-top: 16px;
+          margin: 16px;
         }
         div#head {
           max-width: fit-content;
@@ -76,9 +76,6 @@
               resultsElement.innerHTML = `<p>This does not seem to be a valid Spotify Album URL.</p>`;
               return;
             }
-            const response = await fetch(`https://server.vyz.ee/metadata/${album}`);
-            const json = await response.json();
-            const { albumName, artistName, coverArt } = json;
             const distroResponse = await fetch(`https://server.vyz.ee/album/${album}`);
             const distroJson = await distroResponse.json();
             if (distroJson.error) {
@@ -90,6 +87,9 @@
               return;
             }
             const distro = distroJson.distributor;
+            const response = await fetch(`https://server.vyz.ee/metadata/${album}`);
+            const json = await response.json();
+            const { albumName, artistName, coverArt } = json;
             resultsElement.innerHTML = `
             <p>The release ${albumName} by ${artistName} was originally distributed by:</p>
             <p><big>${distro}</big></p>
