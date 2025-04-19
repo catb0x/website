@@ -1,0 +1,479 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width">
+    <title>Spotify Distributor Finder</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="icon" type="image/x-icon" href="https://raw.githubusercontent.com/twitter/twemoji/refs/heads/master/assets/72x72/1f3b5.png">
+    <meta name="theme-color" content="#FF85B3">
+    <meta content="Spotify Distributor Finder" property="og:title">
+    <style>
+        :root {
+            --bgColor: #FFE6EE;
+            --cardBg: #FFD1E0;
+            --primary: #FF80AB;
+            --textColor: #FFFFFF;
+            --textSecondary: #FFFFFF;
+            --borderRadius: 8px;
+            --transition: all 0.3s ease;
+        }
+        
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        
+        body {
+            background-color: var(--bgColor);
+            color: var(--textColor);
+            font-family: 'Poppins', sans-serif;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 2rem;
+            text-align: center;
+            line-height: 1.6;
+        }
+        
+        h1 {
+            color: #FF80AB;
+            margin-bottom: 1.5rem;
+            font-weight: 700;
+            font-size: 2.5rem;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        
+        .container {
+            max-width: 550px;
+            width: 100%;
+            background-color: var(--cardBg);
+            padding: 2rem;
+            border-radius: var(--borderRadius);
+            box-shadow: 0 10px 20px rgba(255, 128, 171, 0.2);
+        }
+        
+        .searchContainer {
+            display: flex;
+            margin-bottom: 1.5rem;
+            position: relative;
+        }
+        
+        #album {
+            flex: 1;
+            padding: 12px 15px;
+            border: 2px solid #333;
+            border-radius: var(--borderRadius) 0 0 var(--borderRadius);
+            background-color: #333;
+            color: var(--textColor);
+            font-family: 'Poppins', sans-serif;
+            font-size: 16px;
+            transition: var(--transition);
+        }
+        
+        #album:focus {
+            outline: none;
+            border-color: var(--primary);
+        }
+        
+        #album::placeholder {
+            color: var(--textSecondary);
+        }
+        
+        #find {
+            background-color: var(--primary);
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 0 var(--borderRadius) var(--borderRadius) 0;
+            cursor: pointer;
+            font-weight: 600;
+            font-family: 'Poppins', sans-serif;
+            transition: var(--transition);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        #find:hover {
+            background-color: #FF5C95;
+        }
+        
+        #find:active {
+            transform: scale(0.98);
+        }
+        
+        .sparkle {
+            position: absolute;
+            background-color: #FFF;
+            border-radius: 50%;
+            transform: translate(-50%, -50%) scale(0);
+            animation: sparkleAnimation 0.6s ease-out forwards;
+            pointer-events: none;
+        }
+        
+        @keyframes sparkleAnimation {
+            0% {
+                transform: translate(-50%, -50%) scale(0);
+                opacity: 1;
+            }
+            50% {
+                transform: translate(-50%, -50%) scale(1);
+                opacity: 0.8;
+            }
+            100% {
+                transform: translate(-50%, -50%) scale(1.5);
+                opacity: 0;
+            }
+        }
+        
+        #results {
+            margin-top: 2rem;
+            transition: var(--transition);
+        }
+        
+        .resultsCard {
+            background-color: #FF80AB;
+            border-radius: var(--borderRadius);
+            padding: 1.5rem;
+            margin-top: 1.5rem;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+            transition: var(--transition);
+        }
+        
+        .albumArt {
+            width: 250px;
+            height: 250px;
+            object-fit: cover;
+            border-radius: var(--borderRadius);
+            margin: 1.5rem auto;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+            transition: var(--transition);
+        }
+        
+        .albumArt:hover {
+            transform: scale(1.03);
+        }
+        
+        .distributor {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #FFFFFF;
+            margin: 1rem 0;
+            text-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+        }
+        
+        .upc {
+            font-family: monospace;
+            background-color: #333;
+            padding: 8px 12px;
+            border-radius: 4px;
+            display: inline-block;
+            margin-top: 0.5rem;
+        }
+        
+        .albumTitle {
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 0.25rem;
+        }
+        
+        .artistName {
+            color: var(--textSecondary);
+            font-size: 1.2rem;
+            margin-bottom: 1rem;
+        }
+        
+        .loaderContainer {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem;
+        }
+        
+        .loader {
+            width: 48px;
+            height: 48px;
+            border: 5px solid #333;
+            border-bottom-color: var(--primary);
+            border-radius: 50%;
+            display: inline-block;
+            box-sizing: border-box;
+            animation: rotation 1s linear infinite;
+            margin-bottom: 1rem;
+        }
+        
+        .loaderText {
+            color: var(--textSecondary);
+            font-size: 1.1rem;
+        }
+        
+        @keyframes rotation {
+            0% {
+                transform: rotate(0deg);
+            }
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+        
+        .errorMessage {
+            background-color: rgba(239, 83, 80, 0.2);
+            border-left: 4px solid #ef5350;
+            padding: 1rem;
+            border-radius: 4px;
+            text-align: left;
+            margin-top: 1rem;
+        }
+        
+        .recordContainer {
+            position: relative;
+            width: 200px;
+            height: 200px;
+            margin: 0 auto 1.5rem auto;
+        }
+        
+        .record {
+            width: 200px;
+            height: 200px;
+            border-radius: 50%;
+            background: radial-gradient(circle at center, #333 0%, #000 80%);
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+            animation: spin 4s linear infinite;
+            position: relative;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .record::before {
+            content: '';
+            position: absolute;
+            width: 50px;
+            height: 50px;
+            background-color: var(--primary);
+            border-radius: 50%;
+            z-index: 1;
+        }
+        
+        .record::after {
+            content: '';
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            background-color: var(--bgColor);
+            border-radius: 50%;
+            z-index: 2;
+        }
+        
+        @keyframes spin {
+            0% {
+                transform: rotate(0deg);
+            }
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+        
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .fadeIn {
+            animation: fadeIn 0.5s ease forwards;
+        }
+        
+        @media (max-width: 600px) {
+            .container {
+                padding: 1.5rem;
+            }
+            
+            h1 {
+                font-size: 2rem;
+            }
+            
+            .albumArt {
+                width: 200px;
+                height: 200px;
+            }
+            
+            .distributor {
+                font-size: 1.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Spotify Distributor Finder</h1>
+        <div class="searchContainer">
+            <input id="album" placeholder="Paste Spotify Album URL here" />
+            <button id="find" onclick="findDistro()">Find</button>
+        </div>
+        <div id="results"></div>
+    </div>
+
+    <script>
+        const loadingMessages = [
+            "Spinning up the records...",
+            "Searching the music archives...",
+            "Fetching distributor data...",
+            "Analyzing metadata...",
+            "Connecting to Spotify's database...",
+            "Reading the fine print...",
+            "Finding who's behind the music...",
+            "Discovering distributor info..."
+        ];
+        
+        function getRandomLoadingMessage() {
+            return loadingMessages[Math.floor(Math.random() * loadingMessages.length)];
+        }
+        
+        function showLoading(message) {
+            return `
+            <div class="loaderContainer fadeIn">
+                <div class="recordContainer">
+                    <div class="record"></div>
+                </div>
+                <div class="loaderText">${message}</div>
+            </div>
+            `;
+        }
+        
+        function showError(message) {
+            return `
+            <div class="errorMessage fadeIn">
+                <p>${message}</p>
+            </div>
+            `;
+        }
+        
+        function formatAlbumDisplay(albumName, artistName, coverArt, distributor, upc = null) {
+            return `
+            <div class="resultsCard fadeIn">
+                <img class="albumArt" src="${coverArt}" alt="${albumName} by ${artistName}">
+                <div class="albumTitle">${albumName}</div>
+                <div class="artistName">by ${artistName}</div>
+                <p>Distributed by:</p>
+                <div class="distributor">${distributor}</div>
+                ${upc ? `<p>UPC: <span class="upc">${upc}</span></p>` : ''}
+            </div>
+            `;
+        }
+        
+        function createSparkleEffect(e) {
+            const button = e.currentTarget;
+            const sparkle = document.createElement('span');
+            
+            const size = Math.random() * 20 + 10;
+            
+            sparkle.style.width = `${size}px`;
+            sparkle.style.height = `${size}px`;
+            sparkle.style.left = `${e.offsetX}px`;
+            sparkle.style.top = `${e.offsetY}px`;
+            
+            sparkle.classList.add('sparkle');
+            
+            button.appendChild(sparkle);
+            
+            setTimeout(() => {
+                sparkle.remove();
+            }, 600);
+        }
+        
+        document.getElementById('find').addEventListener('click', createSparkleEffect);
+        
+        async function findDistro() {
+            const resultsElement = document.getElementById("results");
+            const inputElement = document.getElementById("album");
+            const inputValue = inputElement.value.trim();
+            
+            if (!inputValue) {
+                resultsElement.innerHTML = showError("Please enter a Spotify Album URL");
+                return;
+            }
+            
+            const albumMatch = inputValue.match(/(?<=https?:\/\/open\.spotify\.com\/album\/)[^\?|#]*/gm);
+            
+            if (!albumMatch || albumMatch.length === 0) {
+                resultsElement.innerHTML = showError("This does not seem to be a valid Spotify Album URL");
+                return;
+            }
+            
+            const album = albumMatch[0];
+            
+            try {
+                resultsElement.innerHTML = showLoading("Connecting to the servers...");
+                
+                setTimeout(async () => {
+                    try {
+                        resultsElement.innerHTML = showLoading("Fetching the distributor...");
+                        
+                        const distroResponse = await fetch(`https://server.vyz.ee/album/${album}`);
+                        const distroJson = await distroResponse.json();
+                        
+                        if (distroJson.error) {
+                            const errorMessage = distroJson.error.text || "An unknown error occurred";
+                            resultsElement.innerHTML = showError(errorMessage);
+                            return;
+                        }
+                        
+                        const distro = distroJson.distributor;
+                        const upc = distroJson.upc || null;
+                        
+                        resultsElement.innerHTML = showLoading("Getting album metadata...");
+                        
+                        setTimeout(async () => {
+                            try {
+                                const metadataResponse = await fetch(`https://server.vyz.ee/metadata/${album}`);
+                                const metadataJson = await metadataResponse.json();
+                                
+                                if (metadataJson.error) {
+                                    const errorMessage = metadataJson.error.text || "An error occurred while fetching metadata";
+                                    resultsElement.innerHTML = showError(errorMessage);
+                                    return;
+                                }
+                                
+                                const { albumName, artistName, coverArt } = metadataJson;
+                                
+                                resultsElement.innerHTML = formatAlbumDisplay(albumName, artistName, coverArt, distro, upc);
+                                
+                            } catch (err) {
+                                resultsElement.innerHTML = showError("Failed to fetch album metadata");
+                                console.error(err);
+                            }
+                        }, 800);
+                        
+                    } catch (err) {
+                        resultsElement.innerHTML = showError("Failed to connect to the server");
+                        console.error(err);
+                    }
+                }, 1000);
+                
+            } catch (err) {
+                resultsElement.innerHTML = showError("An unexpected error occurred");
+                console.error(err);
+            }
+        }
+        
+        document.getElementById("album").addEventListener("keypress", function(event) {
+            if (event.key === "Enter") {
+                event.preventDefault();
+                findDistro();
+            }
+        });
+    </script>
+</body>
+</html>
